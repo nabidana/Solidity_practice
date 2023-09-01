@@ -69,7 +69,7 @@ contract MyAuction is Auction{ //상속받음
     }
     
  
-  
+//옥션 취소하기
 function cancel_auction() external only_owner  an_ongoing_auction returns (bool){
     
         STATE=auction_state.CANCELLED;
@@ -78,12 +78,13 @@ function cancel_auction() external only_owner  an_ongoing_auction returns (bool)
      }
     
     
-    
+//옥션 없애기
 function destruct_auction() external only_owner returns (bool){
         
     require(now > auction_end,"You can't destruct the contract,The auction is still open");
     for(uint i=0;i<bidders.length;i++)
     {
+        //assert 조건 불충족시 예외 발생시키고 종료
         assert(bids[bidders[i]]==0);
     }
 
@@ -92,9 +93,9 @@ function destruct_auction() external only_owner returns (bool){
     
     }
 
-    
+//입찰 취소    
 function withdraw() public returns (bool){
-        require(now > auction_end ,"You can't withdraw, the auction is still open");
+        //require(now > auction_end ,"You can't withdraw, the auction is still open");
         uint amount;
 
         amount=bids[msg.sender];

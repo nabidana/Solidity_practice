@@ -13,6 +13,9 @@ let contract_address = [];
 //=   web3.eth.getAccounts(); // web3.eth.accounts[0];
 let listCount = 0;
 
+let statusList = [];
+
+
 let contractAddress;
 web3.eth.getAccounts().then(function(acc){
   // bidder=acc;
@@ -452,11 +455,11 @@ var auctionContract =  new web3.eth.Contract(
 function bid() {
 var mybid = document.getElementById('value').value;
 
-auctionContract.methods.bid().send({from: '0xf76747F7191FCb308281c8d4Ada49f173176Dc7A', value: web3.utils.toWei(mybid, "ether"), gas: 200000}).then((result)=>{
+auctionContract.methods.bid().send({from: bidder, value: web3.utils.toWei(mybid, "ether"), gas: 200000}).then((result)=>{
   console.log(result)
   // 
 
-  document.getElementById("biding_status").innerHTML="Successfull bid, transaction ID : "+ result.transactionHash; 
+  document.getElementById("biding_status").innerHTML+="Successfull bid, transaction ID : "+ result.transactionHash; 
 
   
 });
@@ -511,7 +514,7 @@ function cancel_auction(){
 // auctionContract.methods.cancel_auction().call().then( (result)=>{
 //   console.log(result)
 // });
-auctionContract.methods.cancel_auction().send({from: '0xf1b748afDb83229a636bf1856bb9Fd7571EfFf2e', gas: 200000}).then((res)=>{
+auctionContract.methods.cancel_auction().send({from: bidder, gas: 200000}).then((res)=>{
 // auctionContract.methods.cancel_auction().call({from: '0x3211BA2b204cdb231EF5616ec3cAd26043b71394'}).then((res)=>{
 console.log(res);
 console.log(res.message());
@@ -524,7 +527,7 @@ function Destruct_auction(){
 // auctionContract.methods.destruct_auction().call().then( (result)=>{
 //   console.log(result) //The auction is still open when now() time < auction_end time
 // });
-auctionContract.methods.destruct_auction().send({from: '0xf1b748afDb83229a636bf1856bb9Fd7571EfFf2e', gas: 200000}).then((res)=>{
+auctionContract.methods.destruct_auction().send({from: bidder, gas: 200000}).then((res)=>{
 console.log(res);
 }); 
 
@@ -539,7 +542,8 @@ function auctionEvents(){
     })
     .on('data', function(event){
         console.log(event); // same results as the optional callback above
-        $("#eventslog").html(event.returnValues.highestBidder + ' has bidden(' + event.returnValues.highestBid + ' wei)');
+        document.getElementById('eventslog').innerHTML += event.returnValues.highestBidder + ' has bidden(' + event.returnValues.highestBid + ' wei)'
+        //$("#eventslog").html(event.returnValues.highestBidder + ' has bidden(' + event.returnValues.highestBid + ' wei)');
   
     })
     .on('changed', function(event){
@@ -602,7 +606,8 @@ function auctionEvents(){
     })
     .on('data', function(event){
         console.log(event); // same results as the optional callback above
-     $("#eventslog").html(event.returnValues.message+' at '+event.returnValues.time);
+        document.getElementById('eventslog').innerHTML += event.returnValues.message+' at '+event.returnValues.time
+     //$("#eventslog").html(event.returnValues.message+' at '+event.returnValues.time);
     })
     .on('changed', function(event){
         // remove event from local database
